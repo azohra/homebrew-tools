@@ -7,10 +7,10 @@ class Lyra < Formula
   bottle :unneeded
 
   def install
-    bin.install "lyra-darwin"
+    bin.install "lyra"
   end
 
   test do
-    system "#{bin}/lyra-darwin", "-h"
+    system "#{bin}/lyra", "-h"
   end
 end
