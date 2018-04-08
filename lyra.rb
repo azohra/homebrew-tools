@@ -2,7 +2,7 @@ class Lyra < Formula
   desc "a lightweight encryption tool that makes protecting your sensitive files easy"
   homepage "https://github.com/azohra/lyra"
   url "https://github.com/azohra/lyra/releases/download/v1.0.0/lyra-darwin"
-  sha256 "f0f2ff1995a53579fe188c5e70a1a649926b5bca7026160f619e9d37b35f4a5f"
+  sha256 "86a2815cc5a7021f3d1a1399be372bca0531010358363bd7822732e43417c847"
 
   bottle :unneeded
 
