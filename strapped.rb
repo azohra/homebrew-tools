@@ -4,8 +4,8 @@
 class Strapped < Formula
   desc "Stay strapped"
   homepage "https://strapped.sh"
-  url "https://github.com/azohra/strapped.sh/archive/0.1.3.tar.gz"
-  sha256 "c2f0144cc9b03fff8b71776b60d45efd503f29e2a18c2c54ac57e48275faa3fe"
+  url "https://github.com/azohra/strapped.sh/archive/0.2.0.tar.gz"
+  sha256 "ee5f6827592a7374f841c206dbd6198a3bb1572ee5dc1a460bde076857ab0e73"
 
   bottle :unneeded
 
