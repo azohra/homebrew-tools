@@ -1,0 +1,30 @@
+name: Check formula
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "gopro-yank.rb"
+      - ".github/workflows/check.yml"
+  pull_request:
+    paths:
+      - "gopro-yank.rb"
+      - ".github/workflows/check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: ruby -c gopro-yank.rb
+      - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
+      - run: brew style --formula azohra/tools/gopro-yank
+      - if: github.event_name == 'push'
+        run: brew install --build-from-source azohra/tools/gopro-yank
+      - if: github.event_name == 'push'
+        run: brew test azohra/tools/gopro-yank
