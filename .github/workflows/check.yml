@@ -3,7 +3,7 @@ name: Check GoPro Yank
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "Casks/gopro-yank.rb"
       - ".github/workflows/check.yml"
