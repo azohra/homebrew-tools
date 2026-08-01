@@ -1,14 +1,14 @@
-# Tools
+# Azohra tools for Homebrew
 
-This repo simplifies installation of our tools, such as:
+Install any formula directly; Homebrew adds the `azohra/tools` tap for you.
 
-- [`lyra`](https://github.com/azohra/lyra), a simple & fast file encryption tool
-
-
-## Installing
-
-
+```sh
+brew install azohra/tools/gopro-yank
 ```
-# (optional) brew update
-brew install azohra/tools/lyra
-```
+
+| Formula | Purpose |
+|---|---|
+| [`gopro-yank`](https://github.com/azohra/gopro-yank) | Download and verify every GoPro cloud original |
+| [`lyra`](https://github.com/azohra/lyra) | Encrypt files with a small command-line tool |
+
+Other formulas in this tap are retained for existing users.
