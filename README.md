@@ -1,14 +1,26 @@
 # Azohra tools for Homebrew
 
-Install any formula directly; Homebrew adds the `azohra/tools` tap for you.
+Small, useful tools—one command away.
+
+## GoPro Yank
+
+Bring your GoPro library home and know nothing is missing.
 
 ```sh
-brew install azohra/tools/gopro-yank
+brew install --cask azohra/tools/gopro-yank
 ```
 
-| Formula | Purpose |
-|---|---|
-| [`gopro-yank`](https://github.com/azohra/gopro-yank) | Download and verify every GoPro cloud original |
-| [`lyra`](https://github.com/azohra/lyra) | Encrypt files with a small command-line tool |
+Homebrew downloads the ready-to-run app for your computer. No Go toolchain or
+developer setup required.
 
-Other formulas in this tap are retained for existing users.
+[Meet GoPro Yank →](https://github.com/azohra/gopro-yank)
+
+## Lyra
+
+Encrypt files from the command line.
+
+```sh
+brew install azohra/tools/lyra
+```
+
+[Meet Lyra →](https://github.com/azohra/lyra)

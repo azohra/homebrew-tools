@@ -1,16 +1,20 @@
-name: Check formula
+name: Check GoPro Yank
 
 on:
   push:
     branches:
       - master
     paths:
-      - "gopro-yank.rb"
+      - "Casks/gopro-yank.rb"
       - ".github/workflows/check.yml"
+      - ".github/workflows/update-gopro-yank.yml"
+      - "scripts/update-gopro-yank.sh"
   pull_request:
     paths:
-      - "gopro-yank.rb"
+      - "Casks/gopro-yank.rb"
       - ".github/workflows/check.yml"
+      - ".github/workflows/update-gopro-yank.yml"
+      - "scripts/update-gopro-yank.sh"
 
 permissions:
   contents: read
@@ -21,10 +25,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - run: ruby -c gopro-yank.rb
+      - run: ruby -c Casks/gopro-yank.rb
       - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
-      - run: brew style --formula azohra/tools/gopro-yank
-      - if: github.event_name == 'push'
-        run: brew install --build-from-source azohra/tools/gopro-yank
-      - if: github.event_name == 'push'
-        run: brew test azohra/tools/gopro-yank
+      - run: brew style --cask azohra/tools/gopro-yank
+      - run: brew install --cask azohra/tools/gopro-yank
+      - run: gopro-yank --version
