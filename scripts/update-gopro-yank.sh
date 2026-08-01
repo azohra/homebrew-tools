@@ -9,25 +9,29 @@ else
   tag=$(gh api "repos/$repository/releases/latest" --jq .tag_name)
 fi
 
-scratch=$(mktemp -d "${TMPDIR:-/tmp}/gopro-yank-formula.XXXXXX")
+scratch=$(mktemp -d "${TMPDIR:-/tmp}/gopro-yank-cask.XXXXXX")
 trap 'rm -rf "$scratch"' EXIT HUP INT TERM
 gh release download "$tag" --repo "$repository" --pattern gopro-yank.rb --dir "$scratch"
 
-formula="$scratch/gopro-yank.rb"
-if ! grep -Fq "/releases/download/$tag/" "$formula"; then
-  echo "downloaded formula does not reference $tag" >&2
+cask="$scratch/gopro-yank.rb"
+if ! grep -Fq 'cask "gopro-yank" do' "$cask"; then
+  echo "downloaded file is not the GoPro Yank cask" >&2
   exit 1
 fi
-if cmp -s "$formula" gopro-yank.rb; then
-  echo "gopro-yank.rb is already current"
+if ! grep -Fq "/releases/download/v#{version}/" "$cask"; then
+  echo "downloaded cask does not reference release assets" >&2
+  exit 1
+fi
+if cmp -s "$cask" Casks/gopro-yank.rb; then
+  echo "GoPro Yank cask is already current"
   exit 0
 fi
 
 branch="automation/gopro-yank-${tag#v}"
 git fetch origin master "$branch" 2>/dev/null || git fetch origin master
 git switch -C "$branch" origin/master
-cp "$formula" gopro-yank.rb
-git add gopro-yank.rb
+cp "$cask" Casks/gopro-yank.rb
+git add Casks/gopro-yank.rb
 git -c user.name="github-actions[bot]" \
   -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
   commit -m "Update GoPro Yank to ${tag#v}"
@@ -38,5 +42,5 @@ if ! gh pr list --head "$branch" --state open --json url --jq '.[0].url' | grep 
     --base master \
     --head "$branch" \
     --title "Update GoPro Yank to ${tag#v}" \
-    --body "Updates the GoPro Yank formula from the verified release asset for $tag."
+    --body "Updates the GoPro Yank cask from the verified release asset for $tag."
 fi
