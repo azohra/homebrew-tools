@@ -28,8 +28,8 @@ if cmp -s "$cask" Casks/gopro-yank.rb; then
 fi
 
 branch="automation/gopro-yank-${tag#v}"
-git fetch origin master "$branch" 2>/dev/null || git fetch origin master
-git switch -C "$branch" origin/master
+git fetch origin main "$branch" 2>/dev/null || git fetch origin main
+git switch -C "$branch" origin/main
 cp "$cask" Casks/gopro-yank.rb
 git add Casks/gopro-yank.rb
 git -c user.name="github-actions[bot]" \
@@ -39,7 +39,7 @@ git push --force-with-lease --set-upstream origin "$branch"
 
 if ! gh pr list --head "$branch" --state open --json url --jq '.[0].url' | grep -q .; then
   gh pr create \
-    --base master \
+    --base main \
     --head "$branch" \
     --title "Update GoPro Yank to ${tag#v}" \
     --body "Updates the GoPro Yank cask from the verified release asset for $tag."
