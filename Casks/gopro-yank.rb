@@ -2,11 +2,11 @@ cask "gopro-yank" do
   arch arm: "arm64", intel: "amd64"
   os macos: "darwin", linux: "linux"
 
-  version "1.1.0"
-  sha256 arm:          "f3bdff26b5cdf329bf5c30aa1d6cccbb1736697372af5876aff1910e4271bac4",
-         intel:        "5de123b0b3e7fb2f2054383b17c1dabdff0bc30c64341ef691b4475544471b9a",
-         arm64_linux:  "badb7ecc319e7054bd996eac651596bf48ce5dbb08fbb5930a76c167cde42f61",
-         x86_64_linux: "64a5978784992e2f6154fef5ea5afd09b9697a1ea99048f10033ef6cf53601ff"
+  version "1.2.0"
+  sha256 arm:          "0d6c664db869f8142c08a262a746a22961ddcbaaec239d3e272086141475cfbe",
+         intel:        "eba5d52d41f1b1e57875e5286922e82ca12800388fc3b642892007f03510ad4b",
+         arm64_linux:  "96a9c0f3c7c7ea03e901b9919469a2c1105248bcb9ede70dac87cc58d16d1e94",
+         x86_64_linux: "b72966d203764557f564952584f6a1ff7a718d7fd5c13fe4e783b8d7cccc517b"
 
   on_macos do
     postflight do
