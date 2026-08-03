@@ -1,0 +1,28 @@
+name: Check YAML.sh
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ysh.rb"
+      - ".github/workflows/check-ysh.yml"
+  pull_request:
+    paths:
+      - "ysh.rb"
+      - ".github/workflows/check-ysh.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: ruby -c ysh.rb
+      - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
+      - run: brew style --formula azohra/tools/ysh
+      - run: brew install --formula azohra/tools/ysh
+      - run: brew test azohra/tools/ysh

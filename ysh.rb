@@ -1,14 +1,16 @@
 class Ysh < Formula
-  desc "Read YAML files using Bash"
-  homepage "https://yaml.sh"
-  url "https://github.com/azohra/yaml.sh/archive/v0.1.5.tar.gz"
-  sha256 "3f511c7f2760f7c82aee1c4b3df3869540a3e067a5b23d35b2fa567b76603391"
+  desc "Query and update YAML with one portable shell and AWK file"
+  homepage "https://yaml.azohra.com"
+  url "https://github.com/azohra/yaml.sh/releases/download/v1.10.0/ysh", using: :nounzip
+  sha256 "fcd4f566464077ecdac038583b5550c9eadf89e9ea859208b7bd6a6237d32016"
+  license "MIT"
 
   def install
-    system "make", "install", "INSTALL_DIR=#{prefix}/bin"
+    bin.install "ysh"
   end
 
   test do
-    system "#{bin}/ysh", "-v"
+    assert_equal "v#{version}", shell_output("#{bin}/ysh --version").strip
+    assert_equal "yaml.sh\n", pipe_output("#{bin}/ysh -r '.name'", "name: yaml.sh\n")
   end
 end
