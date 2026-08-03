@@ -1,8 +1,8 @@
 class Ysh < Formula
   desc "Query and update YAML with one portable shell and AWK file"
   homepage "https://yaml.azohra.com"
-  url "https://github.com/azohra/yaml.sh/releases/download/v1.11.0/ysh", using: :nounzip
-  sha256 "7de8eb98d3549e10b5e5b3e508f2f7a7cdf4d0fab851332c98848b4e4361f9b5"
+  url "https://github.com/azohra/yaml.sh/releases/download/v1.12.0/ysh", using: :nounzip
+  sha256 "642da15775bae7f797032abbc9d4e5a21de7657e4a76de6897d19d1354e53afe"
   license "MIT"
 
   def install
