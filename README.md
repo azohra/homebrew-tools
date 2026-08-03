@@ -2,6 +2,18 @@
 
 Small, useful tools—one command away.
 
+## YAML.sh
+
+Query and update YAML anywhere with `/bin/sh` and AWK.
+
+```sh
+brew install azohra/tools/ysh
+```
+
+One readable executable. No package runtime or hidden binary.
+
+[Meet YAML.sh →](https://yaml.azohra.com)
+
 ## GoPro Yank
 
 Bring your GoPro library home and know nothing is missing.
