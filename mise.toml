@@ -1,0 +1,58 @@
+# mise is the command surface for this repo: `mise tasks` lists the verbs.
+
+[tasks.setup]
+description = "Arm the commit gate"
+run = "mise generate git-pre-commit --write --task=pre-commit"
+
+[tasks.check]
+description = "Ruby syntax and brew style for every formula and cask, against the staged tree"
+run = """
+#!/usr/bin/env bash
+# `brew tap <path>` always `git clone`s — it sees committed history, never
+# the working tree or index. A tap from this checkout's path would silently
+# grade the previous commit while a new one sits staged. Export the exact
+# staged tree into a throwaway repo and tap that instead, so pre-commit
+# proves what is about to land, not what already did.
+set -euo pipefail
+for f in *.rb Casks/*.rb; do
+  [ -f "$f" ] || continue
+  ruby -c "$f"
+done
+# A pre-commit hook runs with GIT_INDEX_FILE (and, in other contexts, GIT_DIR
+# and GIT_WORK_TREE) exported pointing at THIS checkout's real state; any
+# child git command that doesn't clear them operates on it instead of the
+# throwaway repo below, corrupting or confusing the real one.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_PREFIX
+# The throwaway tap is materialized straight into Library/Taps and removed
+# with rm -rf — NEVER via `brew tap`/`brew untap`. brew attributes installed
+# casks to any tap carrying their token, so `brew untap` refuses and
+# `brew untap --force` UNINSTALLS the user's real apps. Touching the real
+# azohra/tools tap here is equally forbidden: real machines install from it.
+taproot="$(brew --repository)/Library/Taps/azohra-check"
+tapdir="$taproot/homebrew-tools-check"
+trap 'rm -rf "$taproot"' EXIT
+rm -rf "$taproot"
+mkdir -p "$tapdir"
+git checkout-index -a --prefix="$tapdir/"
+git -C "$tapdir" init -q
+git -C "$tapdir" add -A
+git -C "$tapdir" -c user.email=check@local -c user.name=check commit -q -m staged
+for f in *.rb; do
+  [ -f "$f" ] || continue
+  brew style --formula "azohra-check/tools-check/$(basename "$f" .rb)"
+done
+for f in Casks/*.rb; do
+  [ -f "$f" ] || continue
+  brew style --cask "azohra-check/tools-check/$(basename "$f" .rb)"
+done
+echo "check: every formula and cask is well-formed"
+"""
+
+[tasks.pre-commit]
+description = "Commit gate: branches author, main never does"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+[ "$(git branch --show-current)" != "main" ] || { echo "pre-commit: refusing — commits are authored on branches, never on main" >&2; exit 1; }
+mise run check
+"""
