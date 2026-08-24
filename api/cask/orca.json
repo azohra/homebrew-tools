@@ -1,0 +1,86 @@
+{
+  "token": "orca",
+  "full_token": "azohra/tools/orca",
+  "old_tokens": [],
+  "tap": "azohra/tools",
+  "name": [
+    "Orca"
+  ],
+  "desc": "Orchestrator for AI coding agents across terminals and worktrees",
+  "homepage": "https://onorca.dev/",
+  "url": "https://github.com/stablyai/orca/releases/download/v1.4.188/orca-macos-arm64.dmg",
+  "url_specs": {
+    "verified": "github.com/stablyai/orca/"
+  },
+  "version": "1.4.188",
+  "autobump": true,
+  "no_autobump_message": null,
+  "skip_livecheck": false,
+  "installed": "1.4.188",
+  "installed_time": 1787438742,
+  "bundle_version": "1.4.188",
+  "bundle_short_version": "1.4.188",
+  "pinned": false,
+  "pinned_version": null,
+  "outdated": false,
+  "sha256": "ac2ece7558f6fd893135c502e84b2161f1c6243d8a62e2fb94bec6eb6b3b257e",
+  "artifacts": [
+    {
+      "app": [
+        "Orca.app"
+      ],
+      "target": "/Applications/Orca.app"
+    },
+    {
+      "binary": [
+        "/Applications/Orca.app/Contents/Resources/bin/orca"
+      ],
+      "target": "/opt/homebrew/bin/orca"
+    },
+    {
+      "zap": [
+        {
+          "trash": [
+            "~/.orca",
+            "~/Library/Application Support/Orca",
+            "~/Library/Caches/com.stablyai.orca",
+            "~/Library/Caches/com.stablyai.orca.ShipIt",
+            "~/Library/HTTPStorages/com.stablyai.orca",
+            "~/Library/Preferences/com.stablyai.orca.plist",
+            "~/Library/Saved Application State/com.stablyai.orca.savedState"
+          ]
+        }
+      ]
+    }
+  ],
+  "caveats": null,
+  "caveats_rosetta": null,
+  "depends_on": {
+    "macos": {
+      ">=": [
+        "11"
+      ]
+    }
+  },
+  "conflicts_with": null,
+  "container": null,
+  "rename": [],
+  "auto_updates": true,
+  "deprecated": false,
+  "deprecation_date": null,
+  "deprecation_reason": null,
+  "deprecation_replacement_formula": null,
+  "deprecation_replacement_cask": null,
+  "deprecate_args": null,
+  "disabled": false,
+  "disable_date": null,
+  "disable_reason": null,
+  "disable_replacement_formula": null,
+  "disable_replacement_cask": null,
+  "disable_args": null,
+  "languages": [],
+  "ruby_source_path": "Casks/orca.rb",
+  "ruby_source_checksum": {
+    "sha256": "dea7e81ebb72c5e104b450de9d3d91b85de3230bb85a5cdd36291287e7417e72"
+  }
+}

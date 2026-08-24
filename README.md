@@ -27,6 +27,19 @@ developer setup required.
 
 [Meet GoPro Yank →](https://github.com/azohra/gopro-yank)
 
+## Orca
+
+Install [Orca](https://onorca.dev/) where the upstream tap can't reach.
+
+```sh
+brew install --cask azohra/tools/orca
+```
+
+Mirrors the upstream `stablyai/orca` cask and publishes the generated API
+metadata (`api/cask/orca.json`) alongside it, so tools that install casks
+from tap metadata — such as mise's `brew-cask:` backend — can install Orca
+too. A daily workflow opens a PR when upstream cuts a release.
+
 ## Lyra
 
 Encrypt files from the command line.

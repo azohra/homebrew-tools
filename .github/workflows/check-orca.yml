@@ -1,0 +1,40 @@
+name: Check Orca
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Casks/orca.rb"
+      - "api/cask/orca.json"
+      - ".github/workflows/check-orca.yml"
+      - ".github/workflows/update-orca.yml"
+      - "scripts/orca-api-json.sh"
+      - "scripts/update-orca.sh"
+  pull_request:
+    paths:
+      - "Casks/orca.rb"
+      - "api/cask/orca.json"
+      - ".github/workflows/check-orca.yml"
+      - ".github/workflows/update-orca.yml"
+      - "scripts/orca-api-json.sh"
+      - "scripts/update-orca.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: ruby -c Casks/orca.rb
+      - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
+      - run: brew style --cask azohra/tools/orca
+      - name: API metadata matches the cask
+        run: |
+          ./scripts/orca-api-json.sh
+          git diff --exit-code api/cask/orca.json
+      - run: brew install --cask azohra/tools/orca
+      - run: orca --version
