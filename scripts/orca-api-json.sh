@@ -17,11 +17,19 @@ fi
 # then put the clone back the way it was.
 cp Casks/orca.rb "$tapdir/Casks/orca.rb"
 mkdir -p api/cask
-# tap_git_head changes with every commit; drop it so the file is reproducible
-# and CI can diff a regeneration against the committed copy. Consumers only
-# need it to fetch cask Ruby for lifecycle hooks, which this cask has none of.
+# Normalize fields that vary by environment so the file is reproducible and
+# CI can diff a regeneration against the committed copy: tap_git_head changes
+# with every commit (consumers only need it to fetch cask Ruby for lifecycle
+# hooks, which this cask has none of), the installed/bundle fields reflect
+# whether the generating machine has Orca installed, and url_specs
+# serialization differs across brew versions.
 brew info --json=v2 azohra/tools/orca \
-  | jq '.casks[0] | del(.tap_git_head)' > api/cask/orca.json
+  | jq '.casks[0]
+        | del(.tap_git_head, .url_specs)
+        | .installed = null
+        | .installed_time = null
+        | .bundle_version = null
+        | .bundle_short_version = null' > api/cask/orca.json
 git -C "$tapdir" checkout -- Casks/orca.rb 2>/dev/null \
   || rm -f "$tapdir/Casks/orca.rb"
 
