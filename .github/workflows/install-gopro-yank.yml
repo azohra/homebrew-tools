@@ -1,0 +1,32 @@
+name: Install GoPro Yank
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Casks/gopro-yank.rb"
+      - ".github/workflows/check.yml"
+      - ".github/workflows/update-gopro-yank.yml"
+      - "scripts/update-gopro-yank.sh"
+  pull_request:
+    paths:
+      - "Casks/gopro-yank.rb"
+      - ".github/workflows/check.yml"
+      - ".github/workflows/update-gopro-yank.yml"
+      - "scripts/update-gopro-yank.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - run: ruby -c Casks/gopro-yank.rb
+      - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
+      - run: brew style --cask azohra/tools/gopro-yank
+      - run: brew install --cask azohra/tools/gopro-yank
+      - run: gopro-yank --version

@@ -1,4 +1,4 @@
-name: Check YAML.sh
+name: Install YAML.sh
 
 on:
   push:
