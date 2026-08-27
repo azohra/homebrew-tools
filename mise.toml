@@ -1,9 +1,5 @@
 # mise is the command surface for this repo: `mise tasks` lists the verbs.
 
-[tasks.setup]
-description = "Arm the commit gate"
-run = "mise generate git-pre-commit --write --task=pre-commit"
-
 [tasks.check]
 description = "Ruby syntax and brew style for every formula and cask, against the staged tree"
 run = """
@@ -46,13 +42,4 @@ for f in Casks/*.rb; do
   brew style --cask "azohra-check/tools-check/$(basename "$f" .rb)"
 done
 echo "check: every formula and cask is well-formed"
-"""
-
-[tasks.pre-commit]
-description = "Commit gate: branches author, main never does"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-[ "$(git branch --show-current)" != "main" ] || { echo "pre-commit: refusing — commits are authored on branches, never on main" >&2; exit 1; }
-mise run check
 """

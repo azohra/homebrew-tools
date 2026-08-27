@@ -1,0 +1,29 @@
+name: Check all formulas and casks
+
+# The other check workflows each install one package: orca, gopro-yank and the
+# ysh formula. This runs the repository's own proof over all seven, which is
+# the only coverage gitrise, lyra, shipyard and strapped have.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-all-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check
+    # brew is preinstalled but off PATH on the Ubuntu runners, and the tap
+    # installs casks, which are macOS-only.
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
+      - run: mise run check
