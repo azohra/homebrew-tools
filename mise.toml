@@ -1,5 +1,11 @@
 # mise is the command surface for this repo: `mise tasks` lists the verbs.
 
+[tools]
+ruby = "4.0"
+
+[tool_config]
+locked = true
+
 [tasks.check]
 description = "Ruby syntax and brew style for every formula and cask, against the staged tree"
 run = """
@@ -10,6 +16,7 @@ run = """
 # staged tree into a throwaway repo and tap that instead, so pre-commit
 # proves what is about to land, not what already did.
 set -euo pipefail
+command -v brew >/dev/null || { echo "check: refusing — Homebrew is not installed" >&2; exit 1; }
 for f in *.rb Casks/*.rb; do
   [ -f "$f" ] || continue
   ruby -c "$f"
