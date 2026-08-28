@@ -29,12 +29,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - run: ruby -c Casks/orca.rb
       - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
-      - run: brew style --cask azohra/tools/orca
-      - name: API metadata matches the cask
-        run: |
-          ./scripts/orca-api-json.sh
-          git diff --exit-code api/cask/orca.json
       - run: brew install --cask azohra/tools/orca
       - run: orca --version

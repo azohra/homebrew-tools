@@ -5,8 +5,18 @@ ruby = "4.0"
 [tool_config]
 locked = true
 
+[tasks."check:orca-api"]
+description = "The published orca API metadata still matches the cask"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+./scripts/orca-api-json.sh
+git diff --exit-code api/cask/orca.json
+"""
+
 [tasks.check]
 description = "Ruby syntax and brew style for every formula and cask, against the staged tree"
+depends = ["check:orca-api"]
 run = """
 #!/usr/bin/env bash
 # `brew tap <path>` always `git clone`s — it sees committed history, never
@@ -49,3 +59,14 @@ for f in Casks/*.rb; do
 done
 echo "check: every formula and cask is well-formed"
 """
+
+# The version bump is a reviewed edit; these fetch upstream's release and
+# rewrite the cask so the bump is the same act locally and on the cron.
+[tasks."update:orca"]
+description = "Rewrite the orca cask and its API metadata from upstream's latest release"
+run = "./scripts/update-orca.sh"
+
+[tasks."update:gopro-yank"]
+description = "Rewrite the gopro-yank cask for a released version"
+raw_args = true
+run = "./scripts/update-gopro-yank.sh"
