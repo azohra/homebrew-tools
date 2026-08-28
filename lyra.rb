@@ -9,6 +9,6 @@ class Lyra < Formula
   end
 
   test do
-    system "#{bin}/lyra", "-h"
+    system "#{bin}/lyra", "--version"
   end
 end
