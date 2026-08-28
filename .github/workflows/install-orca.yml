@@ -7,7 +7,7 @@ on:
     paths:
       - "Casks/orca.rb"
       - "api/cask/orca.json"
-      - ".github/workflows/check-orca.yml"
+      - ".github/workflows/install-orca.yml"
       - ".github/workflows/update-orca.yml"
       - "scripts/orca-api-json.sh"
       - "scripts/update-orca.sh"
@@ -15,7 +15,7 @@ on:
     paths:
       - "Casks/orca.rb"
       - "api/cask/orca.json"
-      - ".github/workflows/check-orca.yml"
+      - ".github/workflows/install-orca.yml"
       - ".github/workflows/update-orca.yml"
       - "scripts/orca-api-json.sh"
       - "scripts/update-orca.sh"
