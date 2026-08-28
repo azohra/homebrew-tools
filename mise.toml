@@ -10,6 +10,7 @@ description = "The published orca API metadata still matches the cask"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+git diff --quiet || { echo "check:orca-api: refusing — tracked changes are not staged" >&2; exit 1; }
 ./scripts/orca-api-json.sh
 git diff --exit-code api/cask/orca.json
 """

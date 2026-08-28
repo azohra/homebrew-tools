@@ -1,6 +1,9 @@
 # Azohra tools for Homebrew
 
-Small, useful tools—one command away.
+Install Azohra command-line tools and applications through Homebrew.
+
+The packages below have dedicated install instructions. Older formulas remain
+in the tap for existing installations.
 
 ## YAML.sh
 
@@ -35,10 +38,10 @@ Install [Orca](https://onorca.dev/) where the upstream tap can't reach.
 brew install --cask azohra/tools/orca
 ```
 
-Mirrors the upstream `stablyai/orca` cask and publishes the generated API
-metadata (`api/cask/orca.json`) alongside it, so tools that install casks
-from tap metadata — such as mise's `brew-cask:` backend — can install Orca
-too. A daily workflow opens a PR when upstream cuts a release.
+This tap tracks the upstream `stablyai/orca` cask and publishes generated API
+metadata in `api/cask/orca.json`. Metadata-based installers, including mise's
+`brew-cask:` backend, can install Orca without evaluating cask Ruby. A daily
+workflow proposes new releases.
 
 ## Lyra
 
@@ -49,3 +52,7 @@ brew install azohra/tools/lyra
 ```
 
 [Meet Lyra →](https://github.com/azohra/lyra)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before changing a formula or cask.

@@ -1,8 +1,8 @@
 class Gitrise < Formula
   desc "Trigger Bitrise builds from the command-line"
-  homepage "https://github.com/azohra/gitrise.sh"
-  url "https://github.com/azohra/gitrise.sh/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "d16cfa88e5577e65bbf9ff2971614ef3641bdd10b24f9f5b6d12bd0c0a87eec6"
+  homepage "https://github.com/Tumiya/gitrise"
+  url "https://github.com/Tumiya/gitrise/archive/refs/tags/v0.1.0.tar.gz"
+  sha256 "0cb39161f02ed56cfbf2e8275cfa2d8eb05467f004f61134525e323378776134"
 
   def install
     bin.install "gitrise.sh"

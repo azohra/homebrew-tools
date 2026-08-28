@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - "Casks/gopro-yank.rb"
-      - ".github/workflows/check.yml"
+      - ".github/workflows/install-gopro-yank.yml"
       - ".github/workflows/update-gopro-yank.yml"
       - "scripts/update-gopro-yank.sh"
   pull_request:
     paths:
       - "Casks/gopro-yank.rb"
-      - ".github/workflows/check.yml"
+      - ".github/workflows/install-gopro-yank.yml"
       - ".github/workflows/update-gopro-yank.yml"
       - "scripts/update-gopro-yank.sh"
 

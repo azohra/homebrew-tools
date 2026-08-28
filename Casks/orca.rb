@@ -8,7 +8,7 @@ cask "orca" do
   url "https://github.com/stablyai/orca/releases/download/v#{version}/orca-macos-#{arch}.dmg",
       verified: "github.com/stablyai/orca/"
   name "Orca"
-  desc "Orchestrator for AI coding agents across terminals and worktrees"
+  desc "IDE for orchestrating AI coding agents across terminals and worktrees"
   homepage "https://onorca.dev/"
 
   livecheck do
@@ -19,6 +19,7 @@ cask "orca" do
   # The app updates itself in place through its built-in updater, so brew
   # (and mise) install once and stay out of the way.
   auto_updates true
+  conflicts_with cask: "orca@rc"
   depends_on macos: :big_sur
 
   app "Orca.app"
