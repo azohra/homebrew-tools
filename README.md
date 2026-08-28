@@ -43,16 +43,6 @@ metadata in `api/cask/orca.json`. Metadata-based installers, including mise's
 `brew-cask:` backend, can install Orca without evaluating cask Ruby. A daily
 workflow proposes new releases.
 
-## Lyra
-
-Encrypt files from the command line.
-
-```sh
-brew install azohra/tools/lyra
-```
-
-[Meet Lyra →](https://github.com/azohra/lyra)
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before changing a formula or cask.
