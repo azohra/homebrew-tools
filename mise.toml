@@ -61,6 +61,36 @@ done
 echo "check: every formula and cask is well-formed"
 """
 
+[tasks."check:install-formulas"]
+description = "Install and test every formula from the staged tree"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+command -v brew >/dev/null || { echo "check:install-formulas: refusing — Homebrew is not installed" >&2; exit 1; }
+git diff --quiet || { echo "check:install-formulas: refusing — tracked changes are not staged" >&2; exit 1; }
+export HOMEBREW_NO_AUTO_UPDATE=1
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_PREFIX
+taproot="$(brew --repository)/Library/Taps/azohra-install"
+tapdir="$taproot/homebrew-tools-install"
+[ ! -e "$taproot" ] || { echo "check:install-formulas: refusing — $taproot already exists" >&2; exit 1; }
+trap 'rm -rf "$taproot"' EXIT
+mkdir -p "$tapdir"
+git checkout-index -a --prefix="$tapdir/"
+git -C "$tapdir" init -q
+git -C "$tapdir" add -A
+git -C "$tapdir" -c user.email=check@local -c user.name=check commit -q -m staged
+for formula in *.rb; do
+  [ -f "$formula" ] || continue
+  token=${formula%.rb}
+  brew list --formula "$token" >/dev/null 2>&1 && {
+    echo "check:install-formulas: refusing — $token is already installed" >&2
+    exit 1
+  }
+  brew install --formula "azohra-install/tools-install/$token"
+  brew test "azohra-install/tools-install/$token"
+done
+"""
+
 # The version bump is a reviewed edit; these fetch upstream's release and
 # rewrite the cask so the bump is the same act locally and on the cron.
 [tasks."update:orca"]

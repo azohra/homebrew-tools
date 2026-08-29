@@ -25,8 +25,9 @@ index.
 
 Do not run `brew tap` or `brew untap` against this checkout. Homebrew may
 associate installed casks with any tap that carries their token, and a forced
-untap can uninstall the real application. Installation tests run on disposable
-GitHub-hosted machines.
+untap can uninstall the real application. On a disposable machine, `mise run
+check:install-formulas` installs and tests every formula through an isolated
+tap. CI runs the same verb.
 
 ## Release updates
 
