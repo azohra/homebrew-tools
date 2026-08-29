@@ -25,9 +25,16 @@ index.
 
 Do not run `brew tap` or `brew untap` against this checkout. Homebrew may
 associate installed casks with any tap that carries their token, and a forced
-untap can uninstall the real application. On a disposable machine, `mise run
-check:install-formulas` installs and tests every formula through an isolated
-tap. CI runs the same verb.
+untap can uninstall the real application. On a disposable machine, run the
+installation checks through their isolated tap:
+
+```sh
+mise run check:install-formulas
+mise run check:install-gopro-yank
+mise run check:install-orca
+```
+
+CI runs the same verbs.
 
 ## Release updates
 

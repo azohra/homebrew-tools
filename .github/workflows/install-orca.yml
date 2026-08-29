@@ -9,6 +9,8 @@ on:
       - "api/cask/orca.json"
       - ".github/workflows/install-orca.yml"
       - ".github/workflows/update-orca.yml"
+      - "mise.toml"
+      - "scripts/check-install.sh"
       - "scripts/orca-api-json.sh"
       - "scripts/update-orca.sh"
   pull_request:
@@ -17,6 +19,8 @@ on:
       - "api/cask/orca.json"
       - ".github/workflows/install-orca.yml"
       - ".github/workflows/update-orca.yml"
+      - "mise.toml"
+      - "scripts/check-install.sh"
       - "scripts/orca-api-json.sh"
       - "scripts/update-orca.sh"
 
@@ -27,8 +31,11 @@ jobs:
   check:
     runs-on: macos-latest
     timeout-minutes: 10
+    env:
+      MISE_TASK_RUN_AUTO_INSTALL: "false"
     steps:
       - uses: actions/checkout@v7
-      - run: brew tap azohra/tools "$GITHUB_WORKSPACE"
-      - run: brew install --cask azohra/tools/orca
-      - run: orca --version
+      - uses: jdx/mise-action@v4
+        with:
+          install: false
+      - run: mise run check:install-orca
