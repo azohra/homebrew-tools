@@ -23,18 +23,16 @@ run = """
 # `brew tap <path>` always `git clone`s — it sees committed history, never
 # the working tree or index. A tap from this checkout's path would silently
 # grade the previous commit while a new one sits staged. Export the exact
-# staged tree into a throwaway repo and tap that instead, so pre-commit
-# proves what is about to land, not what already did.
+# staged tree into a throwaway repo and tap that instead, so this checks what
+# is about to land, not what already did.
 set -euo pipefail
 command -v brew >/dev/null || { echo "check: refusing — Homebrew is not installed" >&2; exit 1; }
 for f in *.rb Casks/*.rb; do
   [ -f "$f" ] || continue
   ruby -c "$f"
 done
-# A pre-commit hook runs with GIT_INDEX_FILE (and, in other contexts, GIT_DIR
-# and GIT_WORK_TREE) exported pointing at THIS checkout's real state; any
-# child git command that doesn't clear them operates on it instead of the
-# throwaway repo below, corrupting or confusing the real one.
+# Keep inherited repository state out of the throwaway repo. Otherwise child
+# Git commands can operate on this checkout instead.
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_PREFIX
 # The throwaway tap is materialized straight into Library/Taps and removed
 # with rm -rf — NEVER via `brew tap`/`brew untap`. brew attributes installed
