@@ -10,8 +10,8 @@ instead of evaluating cask Ruby.
 
 ## Check a change
 
-Install the pinned Ruby version, stage the files you intend to commit, and run
-the repository check:
+Install the pinned toolchain, stage the files you intend to commit, and run the
+repository check:
 
 ```sh
 mise install

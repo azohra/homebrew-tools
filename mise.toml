@@ -1,6 +1,11 @@
 
 [tools]
 ruby = "4.0"
+"http:brew" = { version = "6.0.20", url = "https://github.com/Homebrew/brew/archive/refs/tags/{{ version }}.tar.gz", checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c" }
+
+[env]
+HOMEBREW_FORCE_VENDOR_RUBY = "1"
+HOMEBREW_NO_AUTO_UPDATE = "1"
 
 [tool_config]
 locked = true

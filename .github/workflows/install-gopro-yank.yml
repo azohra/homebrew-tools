@@ -8,6 +8,7 @@ on:
       - "Casks/gopro-yank.rb"
       - ".github/workflows/install-gopro-yank.yml"
       - ".github/workflows/update-gopro-yank.yml"
+      - "mise.lock"
       - "mise.toml"
       - "scripts/check-install.sh"
       - "scripts/update-gopro-yank.sh"
@@ -16,6 +17,7 @@ on:
       - "Casks/gopro-yank.rb"
       - ".github/workflows/install-gopro-yank.yml"
       - ".github/workflows/update-gopro-yank.yml"
+      - "mise.lock"
       - "mise.toml"
       - "scripts/check-install.sh"
       - "scripts/update-gopro-yank.sh"
@@ -27,11 +29,7 @@ jobs:
   check:
     runs-on: macos-latest
     timeout-minutes: 10
-    env:
-      MISE_TASK_RUN_AUTO_INSTALL: "false"
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
-        with:
-          install: false
       - run: mise run check:install-gopro-yank

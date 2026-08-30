@@ -18,9 +18,7 @@ concurrency:
 jobs:
   check:
     name: Check
-    # brew is preinstalled but off PATH on the Ubuntu runners, and the tap
-    # installs casks, which are macOS-only.
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7

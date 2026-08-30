@@ -9,6 +9,7 @@ on:
       - "api/cask/orca.json"
       - ".github/workflows/install-orca.yml"
       - ".github/workflows/update-orca.yml"
+      - "mise.lock"
       - "mise.toml"
       - "scripts/check-install.sh"
       - "scripts/orca-api-json.sh"
@@ -19,6 +20,7 @@ on:
       - "api/cask/orca.json"
       - ".github/workflows/install-orca.yml"
       - ".github/workflows/update-orca.yml"
+      - "mise.lock"
       - "mise.toml"
       - "scripts/check-install.sh"
       - "scripts/orca-api-json.sh"
@@ -31,11 +33,7 @@ jobs:
   check:
     runs-on: macos-latest
     timeout-minutes: 10
-    env:
-      MISE_TASK_RUN_AUTO_INSTALL: "false"
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
-        with:
-          install: false
       - run: mise run check:install-orca

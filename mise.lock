@@ -2,6 +2,48 @@
 
 lockfile_version = 1
 
+[[tools."http:brew"]]
+version = "6.0.20"
+backend = "http:brew"
+specifiers = ["6.0.20"]
+
+[tools."http:brew"."platforms.linux-arm64"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[tools."http:brew"."platforms.linux-arm64-musl"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[tools."http:brew"."platforms.linux-x64"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[tools."http:brew"."platforms.linux-x64-musl"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[tools."http:brew"."platforms.macos-arm64"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[tools."http:brew"."platforms.macos-x64"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[tools."http:brew"."platforms.windows-x64"]
+checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c"
+url = "https://github.com/Homebrew/brew/archive/refs/tags/6.0.20.tar.gz"
+
+[[tools.ruby]]
+version = "4.0.6"
+backend = "core:ruby"
+specifiers = ["4.0"]
+
+[tools.ruby."platforms.windows-x64"]
+checksum = "sha256:328d7a86bea2f4c432783025050c9ffa1c36fcfc54ebccc466b63450ec3af223"
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-4.0.6-1/rubyinstaller-4.0.6-1-x64.7z"
+
 [[tools.ruby]]
 version = "4.0.6"
 backend = "core:ruby"
@@ -39,12 +81,3 @@ provenance = "github-attestations"
 [tools.ruby."platforms.macos-x64"]
 checksum = "sha256:837d299e8f7ddf2be31a229a7a7e019d354979825117989acb3b32b1a9be262a"
 url = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.6.tar.gz"
-
-[[tools.ruby]]
-version = "4.0.6"
-backend = "core:ruby"
-specifiers = ["4.0"]
-
-[tools.ruby."platforms.windows-x64"]
-checksum = "sha256:328d7a86bea2f4c432783025050c9ffa1c36fcfc54ebccc466b63450ec3af223"
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-4.0.6-1/rubyinstaller-4.0.6-1-x64.7z"
