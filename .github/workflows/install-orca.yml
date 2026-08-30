@@ -34,6 +34,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
+        with:
+          minimum_release_age: 24h
       - name: Check generated cask metadata
         run: mise run check:orca-api
       - run: mise run check:install-orca

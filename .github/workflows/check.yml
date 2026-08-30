@@ -23,6 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
+        with:
+          minimum_release_age: 24h
       - run: mise run check
       - name: Install and test every formula
         run: mise run check:install-formulas
