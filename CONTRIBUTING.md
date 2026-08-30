@@ -19,9 +19,10 @@ git add <files>
 mise run check
 ```
 
-The check refuses unstaged tracked changes. It checks Ruby syntax, regenerates
-the Orca metadata, and runs `brew style` against an isolated copy of the Git
-index.
+The check refuses unstaged tracked changes. It checks Ruby syntax and runs
+`brew style` against an isolated copy of the Git index. Changes to the Orca
+cask or its metadata must also pass `mise run check:orca-api`; CI runs that
+arm64 macOS proof before installing the cask.
 
 Do not run `brew tap` or `brew untap` against this checkout. Homebrew may
 associate installed casks with any tap that carries their token, and a forced

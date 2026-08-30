@@ -22,7 +22,6 @@ git diff --exit-code api/cask/orca.json
 
 [tasks.check]
 description = "Ruby syntax and brew style for every formula and cask, against the staged tree"
-depends = ["check:orca-api"]
 run = """
 #!/usr/bin/env bash
 # `brew tap <path>` always `git clone`s — it sees committed history, never

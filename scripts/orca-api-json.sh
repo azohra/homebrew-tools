@@ -1,8 +1,8 @@
 #!/bin/sh
 # Regenerate api/cask/orca.json from Casks/orca.rb so consumers that read
 # tap API metadata (mise's brew-cask backend) see the same cask brew does.
-# Produces arm64 macOS metadata. Linux uses Homebrew's macOS audit simulation;
-# environment-specific artifact paths are normalized below.
+# Runs on arm64 macOS: brew evaluates the cask for the local platform, and
+# arm64 is the only macOS platform mise's brew backend supports.
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -15,10 +15,6 @@ command -v jq >/dev/null || {
   echo "orca-api-json: refusing — jq is not installed" >&2
   exit 1
 }
-if [ "$(uname -s)" = Linux ]; then
-  export HOMEBREW_SIMULATE_MACOS_ON_LINUX=1
-fi
-
 # Keep inherited repository state out of the isolated tap below or its
 # temporary commit can capture the caller's staged files.
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_PREFIX
@@ -54,8 +50,6 @@ brew info --json=v2 azohra-metadata/tools-metadata/orca \
         | .installed_time = null
         | .bundle_version = null
         | .bundle_short_version = null
-        | (.artifacts[] | select(has("app")) | .target) = "/Applications/Orca.app"
-        | (.artifacts[] | select(has("binary")) | .binary[0]) = "/Applications/Orca.app/Contents/Resources/bin/orca"
         | (.artifacts[] | select(has("binary")) | .target) = "/opt/homebrew/bin/orca"' > "$metadata"
 
 jq -e '.token == "orca" and .tap == "azohra/tools"' "$metadata" \
