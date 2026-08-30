@@ -7,9 +7,6 @@ ruby = "4.0"
 HOMEBREW_FORCE_VENDOR_RUBY = "1"
 HOMEBREW_NO_AUTO_UPDATE = "1"
 
-[tool_config]
-locked = true
-
 [tasks."check:orca-api"]
 description = "The published orca API metadata still matches the cask"
 run = """
