@@ -8,8 +8,8 @@
   ],
   "desc": "IDE for orchestrating AI coding agents across terminals and worktrees",
   "homepage": "https://onorca.dev/",
-  "url": "https://github.com/stablyai/orca/releases/download/v1.4.192/orca-macos-arm64.dmg",
-  "version": "1.4.192",
+  "url": "https://github.com/stablyai/orca/releases/download/v1.4.194/orca-macos-arm64.dmg",
+  "version": "1.4.194",
   "autobump": true,
   "no_autobump_message": null,
   "skip_livecheck": false,
@@ -20,7 +20,7 @@
   "pinned": false,
   "pinned_version": null,
   "outdated": false,
-  "sha256": "c8d661992e7de892c7ef257c48c0e8fb3cf7441bf42240db00fb72098262433e",
+  "sha256": "684e9241dd9e11db842b366b66c4dd463d8e588995fb51597c2974804513c768",
   "artifacts": [
     {
       "app": [
@@ -82,6 +82,6 @@
   "languages": [],
   "ruby_source_path": "Casks/orca.rb",
   "ruby_source_checksum": {
-    "sha256": "bedcf2880b6cc4ec9dec752768bd076ecfdc1f33616288be51d92eab642ae22e"
+    "sha256": "1d79357bf316b2be5de431f82bba69b322653ded20020f916df88a00e476a40e"
   }
 }
