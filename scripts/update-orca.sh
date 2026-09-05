@@ -73,6 +73,7 @@ git -c user.name="github-actions[bot]" \
 if git rev-parse --verify -q "refs/remotes/origin/$branch" >/dev/null &&
   git diff --quiet "origin/$branch" HEAD; then
   echo "Orca $version is already proposed on $branch"
+  sh ./scripts/dispatch-check.sh "$branch"
   exit 0
 fi
 
@@ -83,3 +84,5 @@ if gh pr list --head "$branch" --state open --json url --jq '.[0].url' | grep -q
 else
   gh pr create --base main --head "$branch" --title "$title" --body "$body"
 fi
+
+sh ./scripts/dispatch-check.sh "$branch"
