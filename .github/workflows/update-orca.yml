@@ -11,6 +11,7 @@ permissions:
 jobs:
   update:
     if: github.ref == 'refs/heads/main'
+    environment: automation
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
