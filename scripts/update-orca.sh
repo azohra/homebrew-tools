@@ -66,14 +66,13 @@ body="Mirrors the upstream cask at $upstream for v$version and regenerates the A
 git fetch origin main "$branch" 2>/dev/null || git fetch origin main
 git switch -C "$branch" origin/main
 git add Casks/orca.rb api/cask/orca.json
-git -c user.name="github-actions[bot]" \
-  -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+git -c user.name="azohra-bosun[bot]" \
+  -c user.email="325107280+azohra-bosun[bot]@users.noreply.github.com" \
   commit -m "$title"
 
 if git rev-parse --verify -q "refs/remotes/origin/$branch" >/dev/null &&
   git diff --quiet "origin/$branch" HEAD; then
   echo "Orca $version is already proposed on $branch"
-  sh ./scripts/dispatch-check.sh "$branch"
   exit 0
 fi
 
@@ -84,5 +83,3 @@ if gh pr list --head "$branch" --state open --json url --jq '.[0].url' | grep -q
 else
   gh pr create --base main --head "$branch" --title "$title" --body "$body"
 fi
-
-sh ./scripts/dispatch-check.sh "$branch"
