@@ -1,8 +1,8 @@
 class Ysh < Formula
   desc "Query, transform, and carefully edit YAML in one shell file"
   homepage "https://yaml.azohra.com"
-  url "https://github.com/azohra/yaml.sh/releases/download/v1.18.0/ysh", using: :nounzip
-  sha256 "4ec74b5b1a5b96e5b60b5bcd3f44ad401e420a8b4662f54fc623fa9787f16dd3"
+  url "https://github.com/azohra/yaml.sh/releases/download/v1.18.1/ysh", using: :nounzip
+  sha256 "2c486cc7ba37f94cd91694774ff88abd2fc21cafea7fd0ad962a5bd3941e8bcb"
   license "MIT"
 
   def install
