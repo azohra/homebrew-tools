@@ -16,6 +16,7 @@ permissions:
 jobs:
   update:
     if: github.ref == 'refs/heads/main'
+    environment: automation
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
