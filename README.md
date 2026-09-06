@@ -46,3 +46,8 @@ workflow proposes new releases.
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before changing a formula or cask.
+
+YAML.sh updates use `mise run update:ysh -- [version]`. The daily Update YAML.sh
+workflow checks the latest stable release, downloads `ysh` and `ysh.sha256`, and
+verifies the bytes before proposing a formula change. It reuses one Bosun PR;
+publication in the source repository always precedes a formula update.

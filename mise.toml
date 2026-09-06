@@ -88,3 +88,8 @@ run = "./scripts/update-orca.sh"
 description = "Rewrite the gopro-yank cask for a released version"
 raw_args = true
 run = "./scripts/update-gopro-yank.sh"
+
+[tasks."update:ysh"]
+description = "Propose a YAML.sh formula update from verified published bytes"
+raw_args = true
+run = "./scripts/update-ysh.sh"

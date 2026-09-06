@@ -11,6 +11,12 @@ ROOT = Path(__file__).parents[1]
 
 class UpdateContractTests(unittest.TestCase):
     def test_gopro_updater_reuses_existing_proposal_without_second_push(self):
+        self.check_proposal("gopro-yank")
+
+    def test_ysh_updater_reuses_existing_proposal_without_second_push(self):
+        self.check_proposal("ysh")
+
+    def check_proposal(self, product):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "repo"
             remote = Path(directory) / "remote.git"
@@ -21,9 +27,9 @@ class UpdateContractTests(unittest.TestCase):
                             capture_output=True, text=True)
             (root / "Casks").mkdir(parents=True)
             (root / "scripts").mkdir()
-            shutil.copy(ROOT / "scripts/update-gopro-yank.sh", root / "scripts")
-            (root / "Casks/gopro-yank.rb").write_text(
-                'cask "gopro-yank" do\n  version "1.0.0"\nend\n',
+            shutil.copy(ROOT / f"scripts/update-{product}.sh", root / "scripts")
+            (root / ("ysh.rb" if product == "ysh" else "Casks/gopro-yank.rb")).write_text(
+                'class Ysh < Formula\n  url "https://github.com/azohra/yaml.sh/releases/download/v1.0.0/ysh"\n  sha256 "' + '0' * 64 + '"\nend\n' if product == 'ysh' else 'cask "gopro-yank" do\n  version "1.0.0"\nend\n',
                 encoding="utf-8",
             )
             for command in (
@@ -53,10 +59,13 @@ class UpdateContractTests(unittest.TestCase):
 set -eu
 printf '%s\\n' "$*" >> "$GH_CALLS"
 case "$1 $2" in
+  "release view") printf true ;;
   "release download")
     while [ "$#" -gt 0 ]; do
       if [ "$1" = "--dir" ]; then
         shift
+        printf 'artifact\\n' > "$1/ysh"
+        (cd "$1" && shasum -a 256 ysh > ysh.sha256)
     printf '%s\\n' 'cask "gopro-yank" do' '  version "1.1.0"' '  url "https://example.test/releases/download/v#{version}/gopro-yank.zip"' 'end' > "$1/gopro-yank.rb"
       fi
       shift
@@ -86,7 +95,7 @@ esac
             }
 
             first = subprocess.run(
-                ["sh", "scripts/update-gopro-yank.sh", "1.1.0"],
+                ["sh", f"scripts/update-{product}.sh", "1.1.0"],
                 cwd=root,
                 env=environment,
                 capture_output=True,
@@ -95,7 +104,7 @@ esac
             )
             self.assertEqual(first.returncode, 0, first.stderr)
             branch = subprocess.run(
-                ["git", "-C", str(root), "rev-parse", "refs/remotes/origin/automation/gopro-yank"],
+                ["git", "-C", str(root), "rev-parse", f"refs/remotes/origin/automation/{product}"],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -104,7 +113,7 @@ esac
                             capture_output=True, text=True)
 
             second = subprocess.run(
-                ["sh", "scripts/update-gopro-yank.sh", "1.1.0"],
+                ["sh", f"scripts/update-{product}.sh", "1.1.0"],
                 cwd=root,
                 env=environment,
                 capture_output=True,
@@ -113,7 +122,7 @@ esac
             )
             self.assertEqual(second.returncode, 0, second.stderr)
             after = subprocess.run(
-                ["git", "-C", str(root), "rev-parse", "refs/remotes/origin/automation/gopro-yank"],
+                ["git", "-C", str(root), "rev-parse", f"refs/remotes/origin/automation/{product}"],
                 check=True,
                 capture_output=True,
                 text=True,
