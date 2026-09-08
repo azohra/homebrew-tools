@@ -29,19 +29,26 @@ installation checks through their isolated tap after staging the intended files:
 
 ```sh
 mise run check:install-formulas
-mise run check:install-gopro-yank
-mise run check:install-orca
+mise run check:install-cask -- gopro-yank
+mise run check:install-cask -- orca
+mise run check:install-cask -- config
+mise run check:install-cask -- op-agent
 ```
 
 CI runs the same verbs.
 
 ## Release updates
 
-`mise run update:gopro-yank`, `mise run update:ysh` and `mise run update:orca`
-edit local package files. Review and check the diff before committing it.
+`mise run update:<package>` edits local package files for `gopro-yank`, `ysh`,
+`orca`, `config` or `op-agent`. Review and check the diff before committing it.
 The scheduled or manually dispatched Update packages workflow runs those same
 tasks, then opens or refreshes one PR per package with Bosun. Only that PR step
 needs write credentials; the tasks do not switch branches, commit or push.
+
+Config and op-agent updates use Homebrew's `bump-cask-pr --write-only` command
+on a temporary copy of the working cask. Homebrew downloads the release archives
+and updates their checksums; the task copies the result back without Git writes
+in the checkout.
 
 PR checks cover formula installation and any affected cask installation. The
 required Check result includes those proofs, and strict up-to-date enforcement

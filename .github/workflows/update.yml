@@ -6,10 +6,10 @@ on:
       package:
         description: Package to update
         type: choice
-        options: [all, orca, gopro-yank, ysh]
+        options: [all, orca, gopro-yank, ysh, config, op-agent]
         default: all
       version:
-        description: Optional GoPro or YAML.sh version; select one package
+        description: Optional release version; select one package other than Orca
         type: string
   schedule:
     - cron: "17 7 * * *"
@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ${{ fromJSON((github.event_name == 'schedule' || inputs.package == 'all') && '["orca","gopro-yank","ysh"]' || format('["{0}"]', inputs.package)) }}
+        package: ${{ fromJSON((github.event_name == 'schedule' || inputs.package == 'all') && '["orca","gopro-yank","ysh","config","op-agent"]' || format('["{0}"]', inputs.package)) }}
     runs-on: ${{ matrix.package == 'orca' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
@@ -45,7 +45,7 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           if [ -n "$RELEASE_VERSION" ] && { [ "$REQUESTED_PACKAGE" = all ] || [ "$PACKAGE" = orca ]; }; then
-            echo 'Select GoPro Yank or YAML.sh when specifying a version' >&2
+            echo 'Select one package other than Orca when specifying a version' >&2
             exit 1
           fi
           if [ "$PACKAGE" = orca ]; then

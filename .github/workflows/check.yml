@@ -17,36 +17,48 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      orca: ${{ steps.changed.outputs.orca }}
-      gopro: ${{ steps.changed.outputs.gopro }}
+      casks: ${{ steps.changed.outputs.casks }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        env:
+          MISE_GITHUB_TOKEN: ${{ github.token }}
+        with:
+          minimum_release_age: 24h
       - id: changed
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          for package in orca gopro; do
-            token=$package
-            [ "$package" != gopro ] || token=gopro-yank
-            if [ -z "$BASE_SHA" ] || ! git diff --quiet "$BASE_SHA" HEAD -- "Casks/$token.rb" api/cask/orca.json mise.toml scripts .github/workflows/check.yml; then
-              echo "$package=true" >> "$GITHUB_OUTPUT"
-            fi
-          done
-      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
-        env:
-          MISE_GITHUB_TOKEN: ${{ github.token }}
-        with:
-          minimum_release_age: 24h
+          python - <<'PY'
+          import json, os, subprocess
+          matrix = []
+          base = os.environ['BASE_SHA']
+          for package in ('orca', 'gopro-yank', 'config', 'op-agent'):
+              paths = [f'Casks/{package}.rb', 'mise.toml', 'scripts', '.github/workflows/check.yml']
+              if package == 'orca':
+                  paths.append('api/cask/orca.json')
+              if not base or subprocess.run(['git', 'diff', '--quiet', base, 'HEAD', '--', *paths]).returncode:
+                  matrix.append({'package': package, 'os': 'macos-latest'})
+                  if package == 'op-agent':
+                      matrix.append({'package': package, 'os': 'ubuntu-latest'})
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('casks=' + json.dumps(matrix) + '\n')
+          PY
       - run: mise run check
       - name: Install and test every formula
         run: mise run check:install-formulas
 
-  orca:
+  casks:
+    name: ${{ matrix.package }} (${{ matrix.os }})
     needs: formulas
-    if: needs.formulas.outputs.orca == 'true'
-    runs-on: macos-latest
+    if: needs.formulas.outputs.casks != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.formulas.outputs.casks) }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -55,34 +67,21 @@ jobs:
           MISE_GITHUB_TOKEN: ${{ github.token }}
         with:
           minimum_release_age: 24h
-      - run: mise run check:orca-api
-      - run: mise run check:install-orca
-
-  gopro:
-    needs: formulas
-    if: needs.formulas.outputs.gopro == 'true'
-    runs-on: macos-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
-        env:
-          MISE_GITHUB_TOKEN: ${{ github.token }}
-        with:
-          minimum_release_age: 24h
-      - run: mise run check:install-gopro-yank
+      - if: matrix.package == 'orca'
+        run: mise run check:orca-api
+      - env:
+          PACKAGE: ${{ matrix.package }}
+        run: mise run check:install-cask -- "$PACKAGE"
 
   required:
     name: Check
     if: always()
-    needs: [formulas, orca, gopro]
+    needs: [formulas, casks]
     runs-on: ubuntu-latest
     steps:
       - env:
           FORMULAS: ${{ needs.formulas.result }}
-          ORCA: ${{ needs.orca.result }}
-          GOPRO: ${{ needs.gopro.result }}
+          CASKS: ${{ needs.casks.result }}
         run: |
           [ "$FORMULAS" = success ]
-          [ "$ORCA" = success ] || [ "$ORCA" = skipped ]
-          [ "$GOPRO" = success ] || [ "$GOPRO" = skipped ]
+          [ "$CASKS" = success ] || [ "$CASKS" = skipped ]
