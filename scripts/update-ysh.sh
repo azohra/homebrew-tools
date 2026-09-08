@@ -27,30 +27,5 @@ if cmp -s "$formula" ysh.rb; then
   exit 0
 fi
 
-# One branch per formula, rebuilt from main on every run, so a new release
-# rewrites the open proposal instead of opening another pull request beside it.
-branch=automation/ysh
-title="Update YAML.sh to ${tag#v}"
-body="Updates the YAML.sh formula from the verified release asset for $tag."
-
-git fetch origin main "$branch" 2>/dev/null || git fetch origin main
-git switch -C "$branch" origin/main
 cp "$formula" ysh.rb
-git add ysh.rb
-git -c user.name="azohra-bosun[bot]" \
-  -c user.email="325107280+azohra-bosun[bot]@users.noreply.github.com" \
-  commit -m "$title"
-
-if git rev-parse --verify -q "refs/remotes/origin/$branch" >/dev/null &&
-  git diff --quiet "origin/$branch" HEAD; then
-  echo "YAML.sh ${tag#v} is already proposed on $branch"
-  exit 0
-fi
-
-git push --force-with-lease --set-upstream origin "$branch"
-
-if gh pr list --head "$branch" --state open --json url --jq '.[0].url' | grep -q .; then
-  gh pr edit "$branch" --title "$title" --body "$body"
-else
-  gh pr create --base main --head "$branch" --title "$title" --body "$body"
-fi
+echo "Updated ysh package files"

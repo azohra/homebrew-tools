@@ -10,24 +10,22 @@ instead of evaluating cask Ruby.
 
 ## Check a change
 
-Install the pinned toolchain, stage the files you intend to commit, and run the
-repository check:
+Install the pinned toolchain and run the repository check:
 
 ```sh
 mise install
-git add <files>
 mise run check
 ```
 
-The check refuses unstaged tracked changes. It checks Ruby syntax and runs
-`brew style` against an isolated copy of the Git index. Changes to the Orca
+The check tests updater behavior, checks Ruby syntax and runs `brew style`
+on an isolated copy of the working files. Changes to the Orca
 cask or its metadata must also pass `mise run check:orca-api`; CI runs that
 arm64 macOS proof before installing the cask.
 
 Do not run `brew tap` or `brew untap` against this checkout. Homebrew may
 associate installed casks with any tap that carries their token, and a forced
 untap can uninstall the real application. On a disposable machine, run the
-installation checks through their isolated tap:
+installation checks through their isolated tap after staging the intended files:
 
 ```sh
 mise run check:install-formulas
@@ -39,9 +37,15 @@ CI runs the same verbs.
 
 ## Release updates
 
-Scheduled workflows call `mise run update:gopro-yank` and `mise run
-update:orca` to propose release updates. Those tasks push a branch and open or
-update a pull request; they are not local checks.
+`mise run update:gopro-yank`, `mise run update:ysh` and `mise run update:orca`
+edit local package files. Review and check the diff before committing it.
+The scheduled or manually dispatched Update packages workflow runs those same
+tasks, then opens or refreshes one PR per package with Bosun. Only that PR step
+needs write credentials; the tasks do not switch branches, commit or push.
+
+PR checks cover formula installation and any affected cask installation. The
+required Check result includes those proofs, and strict up-to-date enforcement
+prevents merging a stale result. Merging does not repeat the installation jobs.
 
 The Orca updater copies version and checksum fields from the upstream cask. It
 refuses when other cask behavior changes; review those changes by hand.
