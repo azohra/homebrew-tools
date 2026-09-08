@@ -30,6 +30,34 @@ developer setup required.
 
 [Meet GoPro Yank →](https://github.com/azohra/gopro-yank)
 
+## Config
+
+Converge an Apple Silicon Mac from a configuration repository.
+
+```sh
+brew install --cask azohra/tools/config
+```
+
+Homebrew supplies the release executable. Run `config bootstrap` explicitly to
+set up a machine; Config then maintains its own command at `~/.local/bin/config`.
+Installing or upgrading this cask does not run machine setup.
+
+[Config documentation](https://github.com/azohra/config)
+
+## op-agent
+
+Resolve and cache 1Password secrets for command-line tasks.
+
+```sh
+brew install --cask azohra/tools/op-agent
+```
+
+Supports Apple Silicon macOS and AMD64/ARM64 Linux. Homebrew also installs the
+1Password CLI. Run `op-agent setup` explicitly to configure credentials and the
+mise plugin.
+
+[op-agent documentation](https://github.com/azohra/op-agent)
+
 ## Orca
 
 Install [Orca](https://onorca.dev/) where the upstream tap can't reach.
@@ -47,7 +75,7 @@ workflow proposes new releases.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before changing a formula or cask.
 
-YAML.sh updates use `mise run update:ysh -- [version]`. The daily Update YAML.sh
-workflow checks the latest stable release, downloads `ysh` and `ysh.sha256`, and
-verifies the bytes before proposing a formula change. It reuses one Bosun PR;
-publication in the source repository always precedes a formula update.
+The daily Update packages workflow checks upstream releases and proposes package
+updates through the same `mise run update:<package>` tasks used locally. It
+maintains one Bosun PR per package. Publication in the source repository always
+precedes a tap update.

@@ -47,13 +47,10 @@ brew style --cask "$tapdir/Casks/"*.rb
 description = "Install and test every formula from the staged tree"
 run = "./scripts/check-install.sh formulas"
 
-[tasks."check:install-gopro-yank"]
-description = "Install GoPro Yank from the staged cask and print its version"
-run = "./scripts/check-install.sh cask gopro-yank"
-
-[tasks."check:install-orca"]
-description = "Install Orca from the staged cask and print its version"
-run = "./scripts/check-install.sh cask orca"
+[tasks."check:install-cask"]
+description = "Install a staged cask and print its version"
+raw_args = true
+run = "./scripts/check-install.sh cask"
 
 # Update tasks edit local package files. CI opens the resulting pull request.
 [tasks."update:orca"]
@@ -69,3 +66,13 @@ run = "./scripts/update-gopro-yank.sh"
 description = "Update the YAML.sh formula from verified published bytes"
 raw_args = true
 run = "./scripts/update-ysh.sh"
+
+[tasks."update:config"]
+description = "Update the Config cask from its published release"
+raw_args = true
+run = "./scripts/update-cask.sh config"
+
+[tasks."update:op-agent"]
+description = "Update the op-agent cask from its published release"
+raw_args = true
+run = "./scripts/update-cask.sh op-agent"
