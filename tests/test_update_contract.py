@@ -1,136 +1,60 @@
 import os
 from pathlib import Path
 import subprocess
-import shutil
 import tempfile
 import unittest
-
 
 ROOT = Path(__file__).parents[1]
 
 
 class UpdateContractTests(unittest.TestCase):
-    def test_gopro_updater_reuses_existing_proposal_without_second_push(self):
-        self.check_proposal("gopro-yank")
+    def test_local_updates_are_repeatable_without_git_or_pr_writes(self):
+        for product in ("gopro-yank", "ysh"):
+            with self.subTest(product=product):
+                self.check_update(product)
 
-    def test_ysh_updater_reuses_existing_proposal_without_second_push(self):
-        self.check_proposal("ysh")
+    def test_corrupt_cask_leaves_package_unchanged(self):
+        self.check_update("gopro-yank", corrupt=True)
 
-    def check_proposal(self, product):
+    def check_update(self, product, corrupt=False):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory) / "repo"
-            remote = Path(directory) / "remote.git"
-            fake_bin = Path(directory) / "bin"
-            state = Path(directory) / "gh-state"
-            calls = Path(directory) / "gh-calls"
-            subprocess.run(["git", "init", "--bare", str(remote)], check=True,
-                            capture_output=True, text=True)
-            (root / "Casks").mkdir(parents=True)
-            (root / "scripts").mkdir()
-            shutil.copy(ROOT / f"scripts/update-{product}.sh", root / "scripts")
-            (root / ("ysh.rb" if product == "ysh" else "Casks/gopro-yank.rb")).write_text(
-                'class Ysh < Formula\n  url "https://github.com/azohra/yaml.sh/releases/download/v1.0.0/ysh"\n  sha256 "' + '0' * 64 + '"\nend\n' if product == 'ysh' else 'cask "gopro-yank" do\n  version "1.0.0"\nend\n',
-                encoding="utf-8",
-            )
-            for command in (
-                ["git", "init", str(root)],
-                ["git", "-C", str(root), "config", "user.name", "test"],
-                ["git", "-C", str(root), "config", "user.email", "test@example.com"],
-            ):
-                subprocess.run(command, check=True, capture_output=True, text=True)
-            subprocess.run(["git", "-C", str(root), "add", "."], check=True,
-                            capture_output=True, text=True)
-            subprocess.run(
-                ["git", "-C", str(root), "commit", "-m", "initial"],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            subprocess.run(["git", "-C", str(root), "branch", "-M", "main"], check=True,
-                            capture_output=True, text=True)
-            subprocess.run(["git", "-C", str(root), "remote", "add", "origin", str(remote)],
-                            check=True, capture_output=True, text=True)
-            subprocess.run(["git", "-C", str(root), "push", "-u", "origin", "main"],
-                            check=True, capture_output=True, text=True)
-
-            fake_bin.mkdir()
-            (fake_bin / "gh").write_text(
-                """#!/bin/sh
+            root = Path(directory)
+            (root / "Casks").mkdir()
+            binary = root / "bin"
+            binary.mkdir()
+            target = root / ("ysh.rb" if product == "ysh" else "Casks/gopro-yank.rb")
+            initial = ('class Ysh < Formula\n  url "https://github.com/azohra/yaml.sh/releases/download/v1.0.0/ysh"\n  sha256 "' + '0' * 64 + '"\nend\n' if product == "ysh" else 'cask "gopro-yank" do\n  version "1.0.0"\nend\n')
+            target.write_text(initial)
+            (binary / "gh").write_text('''#!/bin/sh
 set -eu
-printf '%s\\n' "$*" >> "$GH_CALLS"
 case "$1 $2" in
   "release view") printf true ;;
   "release download")
-    while [ "$#" -gt 0 ]; do
-      if [ "$1" = "--dir" ]; then
-        shift
-        printf 'artifact\\n' > "$1/ysh"
-        (cd "$1" && shasum -a 256 ysh > ysh.sha256)
-    printf '%s\\n' 'cask "gopro-yank" do' '  version "1.1.0"' '  url "https://example.test/releases/download/v#{version}/gopro-yank.zip"' 'end' > "$1/gopro-yank.rb"
-      fi
-      shift
-    done
+    while [ "$1" != --dir ]; do shift; done
+    cd "$2"
+    printf 'artifact\\n' > ysh
+    shasum -a 256 ysh > ysh.sha256
+    printf '%s\\n' 'cask "gopro-yank" do' '  version "1.1.0"' '  url "https://github.com/azohra/gopro-yank/releases/download/v#{version}/gopro-yank_darwin_arm64.tar.gz"' 'end' > gopro-yank.rb
+    shasum -a 256 gopro-yank.rb > checksums.txt
+    [ "$CORRUPT" != 1 ] || printf corrupt >> gopro-yank.rb
     ;;
-  "pr list")
-    count=0
-    [ -f "$GH_STATE" ] && count=$(cat "$GH_STATE")
-    count=$((count + 1))
-    printf '%s\\n' "$count" > "$GH_STATE"
-    [ "$count" -gt 1 ] && printf '%s\\n' 'https://github.com/azohra/homebrew-tools/pull/1'
-    ;;
-  "pr create") ;;
-  "pr edit") ;;
-  "workflow run") exit 99 ;;
-  *) exit 99 ;;
+  *) echo "unexpected GitHub write: $*" >&2; exit 99 ;;
 esac
-""",
-                encoding="utf-8",
-            )
-            (fake_bin / "gh").chmod(0o755)
-            environment = {
-                **os.environ,
-                "PATH": f"{fake_bin}:{os.environ['PATH']}",
-                "GH_CALLS": str(calls),
-                "GH_STATE": str(state),
-            }
-
-            first = subprocess.run(
-                ["sh", f"scripts/update-{product}.sh", "1.1.0"],
-                cwd=root,
-                env=environment,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
+''')
+            (binary / "gh").chmod(0o755)
+            environment = {**os.environ, "PATH": f"{binary}:{os.environ['PATH']}", "CORRUPT": "1" if corrupt else "0"}
+            def update():
+                return subprocess.run(["sh", str(ROOT / f"scripts/update-{product}.sh"), "1.1.0"], cwd=root, env=environment, capture_output=True, text=True)
+            first = update()
+            if corrupt:
+                self.assertNotEqual(first.returncode, 0)
+                self.assertIn("release bytes do not match", first.stderr)
+                self.assertEqual(target.read_text(), initial)
+                return
             self.assertEqual(first.returncode, 0, first.stderr)
-            branch = subprocess.run(
-                ["git", "-C", str(root), "rev-parse", f"refs/remotes/origin/automation/{product}"],
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip()
-            subprocess.run(["git", "-C", str(root), "switch", "main"], check=True,
-                            capture_output=True, text=True)
-
-            second = subprocess.run(
-                ["sh", f"scripts/update-{product}.sh", "1.1.0"],
-                cwd=root,
-                env=environment,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
+            updated = target.read_text()
+            self.assertIn("1.1.0", updated)
+            second = update()
             self.assertEqual(second.returncode, 0, second.stderr)
-            after = subprocess.run(
-                ["git", "-C", str(root), "rev-parse", f"refs/remotes/origin/automation/{product}"],
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout.strip()
-            self.assertEqual(after, branch)
-            self.assertEqual(state.read_text(encoding="utf-8").strip(), "1")
-            self.assertNotIn("workflow run", calls.read_text(encoding="utf-8"))
-
-
-if __name__ == "__main__":
-    unittest.main()
+            self.assertEqual(target.read_text(), updated)
+            self.assertFalse((root / ".git").exists())

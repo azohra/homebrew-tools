@@ -57,29 +57,4 @@ grep -Fq "\"$intel\"" Casks/orca.rb
 
 ./scripts/orca-api-json.sh
 
-# One branch per cask, rebuilt from main on every run, so a new release
-# rewrites the open proposal instead of opening another pull request beside it.
-branch=automation/orca
-title="Update Orca to $version"
-body="Mirrors the upstream cask at $upstream for v$version and regenerates the API metadata."
-
-git fetch origin main "$branch" 2>/dev/null || git fetch origin main
-git switch -C "$branch" origin/main
-git add Casks/orca.rb api/cask/orca.json
-git -c user.name="azohra-bosun[bot]" \
-  -c user.email="325107280+azohra-bosun[bot]@users.noreply.github.com" \
-  commit -m "$title"
-
-if git rev-parse --verify -q "refs/remotes/origin/$branch" >/dev/null &&
-  git diff --quiet "origin/$branch" HEAD; then
-  echo "Orca $version is already proposed on $branch"
-  exit 0
-fi
-
-git push --force-with-lease --set-upstream origin "$branch"
-
-if gh pr list --head "$branch" --state open --json url --jq '.[0].url' | grep -q .; then
-  gh pr edit "$branch" --title "$title" --body "$body"
-else
-  gh pr create --base main --head "$branch" --title "$title" --body "$body"
-fi
+echo "Updated orca package files"

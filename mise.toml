@@ -1,6 +1,8 @@
 
 [tools]
 python = "3.14"
+gh = "2.100.0"
+jq = "1.8.1"
 ruby = "4.0"
 "http:brew" = { version = "6.0.20", url = "https://github.com/Homebrew/brew/archive/refs/tags/{{ version }}.tar.gz", checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c" }
 
@@ -9,7 +11,7 @@ HOMEBREW_FORCE_VENDOR_RUBY = "1"
 HOMEBREW_NO_AUTO_UPDATE = "1"
 
 [tasks.test]
-description = "Test updater proposal idempotency without network or Homebrew mutations"
+description = "Test package updates without publication"
 run = "python -m unittest discover -s tests -v"
 
 [tasks."check:orca-api"]
@@ -23,47 +25,22 @@ git diff --exit-code api/cask/orca.json
 """
 
 [tasks.check]
-description = "Ruby syntax and brew style for every formula and cask, against the staged tree"
+description = "Check updater behavior and Homebrew package syntax and style"
 depends = ["test"]
 run = """
 #!/usr/bin/env bash
-# `brew tap <path>` always `git clone`s — it sees committed history, never
-# the working tree or index. A tap from this checkout's path would silently
-# grade the previous commit while a new one sits staged. Export the exact
-# staged tree into a throwaway repo and tap that instead, so this checks what
-# is about to land, not what already did.
 set -euo pipefail
-command -v brew >/dev/null || { echo "check: refusing — Homebrew is not installed" >&2; exit 1; }
-for f in *.rb Casks/*.rb; do
-  [ -f "$f" ] || continue
-  ruby -c "$f"
+for file in *.rb Casks/*.rb; do
+  ruby -c "$file"
 done
-# Keep inherited repository state out of the throwaway repo. Otherwise child
-# Git commands can operate on this checkout instead.
-unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_PREFIX
-# The throwaway tap is materialized straight into Library/Taps and removed
-# with rm -rf — NEVER via `brew tap`/`brew untap`. brew attributes installed
-# casks to any tap carrying their token, so `brew untap` refuses and
-# `brew untap --force` UNINSTALLS the user's real apps. Touching the real
-# azohra/tools tap here is equally forbidden: real machines install from it.
-taproot="$(brew --repository)/Library/Taps/azohra-check"
-tapdir="$taproot/homebrew-tools-check"
-trap 'rm -rf "$taproot"' EXIT
-rm -rf "$taproot"
-mkdir -p "$tapdir"
-git checkout-index -a --prefix="$tapdir/"
-git -C "$tapdir" init -q
-git -C "$tapdir" add -A
-git -C "$tapdir" -c user.email=check@local -c user.name=check commit -q -m staged
-for f in *.rb; do
-  [ -f "$f" ] || continue
-  brew style --formula "azohra-check/tools-check/$(basename "$f" .rb)"
-done
-for f in Casks/*.rb; do
-  [ -f "$f" ] || continue
-  brew style --cask "azohra-check/tools-check/$(basename "$f" .rb)"
-done
-echo "check: every formula and cask is well-formed"
+tapdir="$(brew --repository)/Library/Taps/azohra-check/homebrew-tools-check"
+[ ! -e "$tapdir" ] || { echo "check: temporary tap already exists" >&2; exit 1; }
+trap 'rm -rf "$tapdir"' EXIT
+mkdir -p "$tapdir/Casks"
+cp ./*.rb "$tapdir/"
+cp Casks/*.rb "$tapdir/Casks/"
+brew style --formula "$tapdir/"*.rb
+brew style --cask "$tapdir/Casks/"*.rb
 """
 
 [tasks."check:install-formulas"]
@@ -78,8 +55,7 @@ run = "./scripts/check-install.sh cask gopro-yank"
 description = "Install Orca from the staged cask and print its version"
 run = "./scripts/check-install.sh cask orca"
 
-# The version bump is a reviewed edit; these fetch upstream's release and
-# rewrite the cask so the bump is the same act locally and on the cron.
+# Update tasks edit local package files. CI opens the resulting pull request.
 [tasks."update:orca"]
 description = "Rewrite the orca cask and its API metadata from upstream's latest release"
 run = "./scripts/update-orca.sh"
@@ -90,6 +66,6 @@ raw_args = true
 run = "./scripts/update-gopro-yank.sh"
 
 [tasks."update:ysh"]
-description = "Propose a YAML.sh formula update from verified published bytes"
+description = "Update the YAML.sh formula from verified published bytes"
 raw_args = true
 run = "./scripts/update-ysh.sh"

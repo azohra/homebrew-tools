@@ -1,0 +1,74 @@
+name: Update packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to update
+        type: choice
+        options: [all, orca, gopro-yank, ysh]
+        default: all
+      version:
+        description: Optional GoPro or YAML.sh version; select one package
+        type: string
+  schedule:
+    - cron: "17 7 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-updates
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON((github.event_name == 'schedule' || inputs.package == 'all') && '["orca","gopro-yank","ysh"]' || format('["{0}"]', inputs.package)) }}
+    runs-on: ${{ matrix.package == 'orca' && 'macos-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        env:
+          MISE_GITHUB_TOKEN: ${{ github.token }}
+        with:
+          minimum_release_age: 24h
+      - name: Update package files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE: ${{ matrix.package }}
+          REQUESTED_PACKAGE: ${{ inputs.package }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [ -n "$RELEASE_VERSION" ] && { [ "$REQUESTED_PACKAGE" = all ] || [ "$PACKAGE" = orca ]; }; then
+            echo 'Select GoPro Yank or YAML.sh when specifying a version' >&2
+            exit 1
+          fi
+          if [ "$PACKAGE" = orca ]; then
+            mise run update:orca
+          else
+            mise run "update:$PACKAGE" -- "$RELEASE_VERSION"
+          fi
+      - name: Create Bosun token
+        id: bosun
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          client-id: ${{ vars.BOSUN_CLIENT_ID }}
+          private-key: ${{ secrets.BOSUN_PRIVATE_KEY }}
+          owner: azohra
+          repositories: homebrew-tools
+          permission-contents: write
+          permission-pull-requests: write
+      - name: Propose update
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ steps.bosun.outputs.token }}
+          branch: automation/${{ matrix.package }}
+          delete-branch: true
+          commit-message: "chore(deps): update ${{ matrix.package }}"
+          title: "chore(deps): update ${{ matrix.package }}"
+          body: "Refresh ${{ matrix.package }} from its upstream release. Record the release version and checksums in the package definition."
