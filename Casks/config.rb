@@ -1,6 +1,6 @@
 cask "config" do
-  version "0.19.0"
-  sha256 "17a0f12aa0b3916317d5beda25f038f294a81c80a8acbed67783938b9cc80160"
+  version "0.22.0"
+  sha256 "ad22b7d0fa75ae0b2eb7bb1e089db91e277a9155eb1f7d66a96c06332f5627e0"
 
   url "https://github.com/azohra/config/releases/download/v#{version}/config_darwin_arm64.tar.gz"
   name "Config"
