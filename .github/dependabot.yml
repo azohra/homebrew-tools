@@ -17,3 +17,6 @@ updates:
         update-types:
           - minor
           - patch
+    commit-message:
+      prefix: ci
+      include: scope
