@@ -17,8 +17,8 @@ mise install
 mise run check
 ```
 
-`check` runs `test`, the updater tests, and `lint`, which checks Ruby syntax
-and runs `brew style` on an isolated copy of the working files. Changes to the Orca
+`check` runs `lint`, which checks Ruby syntax and runs `brew style` on an
+isolated copy of the working files. Changes to the Orca
 cask or its metadata must also pass `mise run check:orca-api`; CI runs that
 arm64 macOS proof before installing the cask.
 
@@ -39,15 +39,15 @@ CI runs the same verbs.
 
 ## Release updates
 
-`mise run update:<package>` edits local package files for `ysh` or `orca`.
-Review and check the diff before committing it. The scheduled or manually
-dispatched Update packages workflow runs those same tasks, then opens or
-refreshes one PR per package with Bosun. Only that PR step needs write
-credentials; the tasks do not switch branches, commit or push.
+`mise run update:orca` rewrites the Orca cask and its API metadata from
+upstream's latest release. Review and check the diff before committing it. The
+scheduled or manually dispatched Update packages workflow runs the same task,
+then opens or refreshes its PR with Bosun. Only that PR step needs write
+credentials; the task does not switch branches, commit or push.
 
-The `gopro-yank`, `config` and `op-agent` casks arrive the other way round:
-each release runs goreleaser, which opens a pull request here with the
-generated cask, and this repository's checks gate it.
+Every azohra package arrives the other way round: a release of gopro-yank,
+config, op-agent or YAML.sh opens a pull request here with the generated cask
+or formula, and this repository's checks gate it.
 
 PR checks cover formula installation and any affected cask installation. The
 required Check result includes those proofs, and strict up-to-date enforcement

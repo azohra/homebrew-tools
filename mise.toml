@@ -10,10 +10,6 @@ ruby = "4.0"
 HOMEBREW_FORCE_VENDOR_RUBY = "1"
 HOMEBREW_NO_AUTO_UPDATE = "1"
 
-[tasks.test]
-description = "Test package updates without publication"
-run = "python -m unittest discover -s tests -v"
-
 [tasks."check:orca-api"]
 description = "The published orca API metadata still matches the cask"
 run = """
@@ -44,7 +40,7 @@ brew style --cask "$tapdir/Casks/"*.rb
 
 [tasks.check]
 description = "The definition of green"
-depends = ["lint", "test"]
+depends = ["lint"]
 
 [tasks."check:install-formulas"]
 description = "Install and test every formula from the staged tree"
@@ -55,12 +51,7 @@ description = "Install a staged cask and print its version"
 raw_args = true
 run = "./scripts/check-install.sh cask"
 
-# Update tasks edit local package files. CI opens the resulting pull request.
+# The Orca updater edits local package files. CI opens the resulting pull request.
 [tasks."update:orca"]
 description = "Rewrite the orca cask and its API metadata from upstream's latest release"
 run = "./scripts/update-orca.sh"
-
-[tasks."update:ysh"]
-description = "Update the YAML.sh formula from verified published bytes"
-raw_args = true
-run = "./scripts/update-ysh.sh"

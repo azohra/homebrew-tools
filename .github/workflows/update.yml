@@ -6,7 +6,7 @@ on:
       package:
         description: Package to update
         type: choice
-        options: [all, orca, ysh]
+        options: [all, orca]
         default: all
       version:
         description: Optional release version; select one package other than Orca
@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ${{ fromJSON((github.event_name == 'schedule' || inputs.package == 'all') && '["orca","ysh"]' || format('["{0}"]', inputs.package)) }}
+        package: ${{ fromJSON((github.event_name == 'schedule' || inputs.package == 'all') && '["orca"]' || format('["{0}"]', inputs.package)) }}
     runs-on: ${{ matrix.package == 'orca' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
