@@ -24,9 +24,8 @@ git diff --quiet || { echo "check:orca-api: refusing — tracked changes are not
 git diff --exit-code api/cask/orca.json
 """
 
-[tasks.check]
-description = "Check updater behavior and Homebrew package syntax and style"
-depends = ["test"]
+[tasks.lint]
+description = "Ruby syntax and brew style for every formula and cask, on an isolated copy"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
@@ -34,7 +33,7 @@ for file in *.rb Casks/*.rb; do
   ruby -c "$file"
 done
 tapdir="$(brew --repository)/Library/Taps/azohra-check/homebrew-tools-check"
-[ ! -e "$tapdir" ] || { echo "check: temporary tap already exists" >&2; exit 1; }
+[ ! -e "$tapdir" ] || { echo "lint: temporary tap already exists" >&2; exit 1; }
 trap 'rm -rf "$tapdir"' EXIT
 mkdir -p "$tapdir/Casks"
 cp ./*.rb "$tapdir/"
@@ -42,6 +41,10 @@ cp Casks/*.rb "$tapdir/Casks/"
 brew style --formula "$tapdir/"*.rb
 brew style --cask "$tapdir/Casks/"*.rb
 """
+
+[tasks.check]
+description = "The definition of green"
+depends = ["lint", "test"]
 
 [tasks."check:install-formulas"]
 description = "Install and test every formula from the staged tree"
@@ -61,13 +64,3 @@ run = "./scripts/update-orca.sh"
 description = "Update the YAML.sh formula from verified published bytes"
 raw_args = true
 run = "./scripts/update-ysh.sh"
-
-[tasks."update:config"]
-description = "Update the Config cask from its published release"
-raw_args = true
-run = "./scripts/update-cask.sh config"
-
-[tasks."update:op-agent"]
-description = "Update the op-agent cask from its published release"
-raw_args = true
-run = "./scripts/update-cask.sh op-agent"
