@@ -39,11 +39,14 @@ CI runs the same verbs.
 
 ## Release updates
 
-`mise run update:<package>` edits local package files for `gopro-yank`, `ysh`,
-`orca`, `config` or `op-agent`. Review and check the diff before committing it.
-The scheduled or manually dispatched Update packages workflow runs those same
+`mise run update:<package>` edits local package files for `ysh`, `orca`,
+`config` or `op-agent`. Review and check the diff before committing it. The
+scheduled or manually dispatched Update packages workflow runs those same
 tasks, then opens or refreshes one PR per package with Bosun. Only that PR step
 needs write credentials; the tasks do not switch branches, commit or push.
+
+The `gopro-yank` cask arrives the other way round: its release opens a pull
+request here with the generated cask, and this repository's checks gate it.
 
 Config and op-agent updates use Homebrew's `bump-cask-pr --write-only` command
 on a temporary copy of the working cask. Homebrew downloads the release archives
