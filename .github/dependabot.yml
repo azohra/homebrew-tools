@@ -13,11 +13,8 @@ updates:
       default-days: 1
     groups:
       github-actions-minor-patch:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
+        patterns: ["*"]
+        update-types: [minor, patch]
     commit-message:
       prefix: ci
       include: scope
