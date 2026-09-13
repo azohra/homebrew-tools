@@ -57,11 +57,6 @@ run = "./scripts/check-install.sh cask"
 description = "Rewrite the orca cask and its API metadata from upstream's latest release"
 run = "./scripts/update-orca.sh"
 
-[tasks."update:gopro-yank"]
-description = "Rewrite the gopro-yank cask for a released version"
-raw_args = true
-run = "./scripts/update-gopro-yank.sh"
-
 [tasks."update:ysh"]
 description = "Update the YAML.sh formula from verified published bytes"
 raw_args = true
