@@ -4,9 +4,7 @@ This repository is the `azohra/tools` Homebrew tap. Changes to `main` are
 available to Homebrew immediately, so keep each package change and its proof in
 the same commit.
 
-Formulae live at the repository root. Casks live in `Casks/`. The Orca cask
-also publishes `api/cask/orca.json` for installers that consume tap metadata
-instead of evaluating cask Ruby.
+Formulae live at the repository root. Casks live in `Casks/`.
 
 ## Check a change
 
@@ -18,9 +16,7 @@ mise run check
 ```
 
 `check` runs `lint`, which checks Ruby syntax and runs `brew style` on an
-isolated copy of the working files. Changes to the Orca
-cask or its metadata must also pass `mise run check:orca-api`; CI runs that
-arm64 macOS proof before installing the cask.
+isolated copy of the working files.
 
 Do not run `brew tap` or `brew untap` against this checkout. Homebrew may
 associate installed casks with any tap that carries their token, and a forced
@@ -30,7 +26,6 @@ installation checks through their isolated tap after staging the intended files:
 ```sh
 mise run check:install-formulas
 mise run check:install-cask -- gopro-yank
-mise run check:install-cask -- orca
 mise run check:install-cask -- config
 mise run check:install-cask -- op-agent
 ```
@@ -39,26 +34,9 @@ CI runs the same verbs.
 
 ## Release updates
 
-`mise run update:orca` rewrites the Orca cask and its API metadata from
-upstream's latest release. Review and check the diff before committing it. The
-scheduled or manually dispatched Update packages workflow runs the same task,
-then opens or refreshes its PR with Bosun. Only that PR step needs write
-credentials; the task does not switch branches, commit or push.
-
-Every azohra package arrives the other way round: a release of gopro-yank,
-config, op-agent or YAML.sh opens a pull request here with the generated cask
-or formula, and this repository's checks gate it.
+A release of gopro-yank, config, op-agent or YAML.sh opens a pull request here
+with the generated cask or formula, and this repository's checks gate it.
 
 PR checks cover formula installation and any affected cask installation. The
 required Check result includes those proofs, and strict up-to-date enforcement
 prevents merging a stale result. Merging does not repeat the installation jobs.
-
-The Orca updater copies version and checksum fields from the upstream cask. It
-refuses when other cask behavior changes; review those changes by hand.
-Regenerate `api/cask/orca.json` with `./scripts/orca-api-json.sh`; do not edit
-the generated file.
-
-The local Orca metadata exists because the upstream tap does not publish
-`api/cask/orca.json`. Retire the mirror after
-[stablyai/homebrew-orca#237](https://github.com/stablyai/homebrew-orca/issues/237)
-is resolved and a metadata-based install works from `stablyai/orca`.

@@ -35,10 +35,8 @@ jobs:
           import json, os, subprocess
           matrix = []
           base = os.environ['BASE_SHA']
-          for package in ('orca', 'gopro-yank', 'config', 'op-agent'):
+          for package in ('gopro-yank', 'config', 'op-agent'):
               paths = [f'Casks/{package}.rb', 'mise.toml', 'scripts', '.github/workflows/check.yml']
-              if package == 'orca':
-                  paths.append('api/cask/orca.json')
               if not base or subprocess.run(['git', 'diff', '--quiet', base, 'HEAD', '--', *paths]).returncode:
                   matrix.append({'package': package, 'os': 'macos-latest'})
                   if package == 'op-agent':
@@ -67,8 +65,6 @@ jobs:
           MISE_GITHUB_TOKEN: ${{ github.token }}
         with:
           minimum_release_age: 24h
-      - if: matrix.package == 'orca'
-        run: mise run check:orca-api
       - env:
           PACKAGE: ${{ matrix.package }}
         run: mise run check:install-cask -- "$PACKAGE"
