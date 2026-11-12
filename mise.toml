@@ -1,24 +1,12 @@
 
 [tools]
 python = "3.14"
-gh = "2.100.0"
-jq = "1.8.1"
 ruby = "4.0"
 "http:brew" = { version = "6.0.20", url = "https://github.com/Homebrew/brew/archive/refs/tags/{{ version }}.tar.gz", checksum = "blake3:5190087c39c349285282d7a07a6fe41504d398950b45a99b113a0ad17050fa9c" }
 
 [env]
 HOMEBREW_FORCE_VENDOR_RUBY = "1"
 HOMEBREW_NO_AUTO_UPDATE = "1"
-
-[tasks."check:orca-api"]
-description = "The published orca API metadata still matches the cask"
-run = """
-#!/usr/bin/env bash
-set -euo pipefail
-git diff --quiet || { echo "check:orca-api: refusing — tracked changes are not staged" >&2; exit 1; }
-./scripts/orca-api-json.sh
-git diff --exit-code api/cask/orca.json
-"""
 
 [tasks.lint]
 description = "Ruby syntax and brew style for every formula and cask, on an isolated copy"
@@ -59,8 +47,3 @@ description = "Install a staged cask and print its version"
 lock = "homebrew-tools-install"
 raw_args = true
 run = "./scripts/check-install.sh cask"
-
-# The Orca updater edits local package files. CI opens the resulting pull request.
-[tasks."update:orca"]
-description = "Rewrite the orca cask and its API metadata from upstream's latest release"
-run = "./scripts/update-orca.sh"

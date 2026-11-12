@@ -58,24 +58,6 @@ mise plugin.
 
 [op-agent documentation](https://github.com/azohra/op-agent)
 
-## Orca
-
-Install [Orca](https://onorca.dev/) where the upstream tap can't reach.
-
-```sh
-brew install --cask azohra/tools/orca
-```
-
-This tap tracks the upstream `stablyai/orca` cask and publishes generated API
-metadata in `api/cask/orca.json`. Metadata-based installers, including mise's
-`brew-cask:` backend, can install Orca without evaluating cask Ruby. A daily
-workflow proposes new releases.
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before changing a formula or cask.
-
-The daily Update packages workflow checks upstream releases and proposes package
-updates through the same `mise run update:<package>` tasks used locally. It
-maintains one Bosun PR per package. Publication in the source repository always
-precedes a tap update.
