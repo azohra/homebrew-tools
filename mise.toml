@@ -22,6 +22,8 @@ git diff --exit-code api/cask/orca.json
 
 [tasks.lint]
 description = "Ruby syntax and brew style for every formula and cask, on an isolated copy"
+# The temporary tap lives in the one Homebrew every worktree shares.
+lock = true
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
@@ -38,16 +40,23 @@ brew style --formula "$tapdir/"*.rb
 brew style --cask "$tapdir/Casks/"*.rb
 """
 
+[tasks."check:tasks"]
+description = "Every task definition is valid"
+run = "mise tasks validate"
+
 [tasks.check]
 description = "The definition of green"
-depends = ["lint"]
+depends = ["check:tasks", "lint"]
 
 [tasks."check:install-formulas"]
 description = "Install and test every formula from the staged tree"
+# Both install proofs stage the same tap in the one Homebrew every worktree shares.
+lock = "homebrew-tools-install"
 run = "./scripts/check-install.sh formulas"
 
 [tasks."check:install-cask"]
 description = "Install a staged cask and print its version"
+lock = "homebrew-tools-install"
 raw_args = true
 run = "./scripts/check-install.sh cask"
 
