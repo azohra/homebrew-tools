@@ -30,34 +30,6 @@ developer setup required.
 
 [Meet GoPro Yank →](https://github.com/azohra/gopro-yank)
 
-## Config
-
-Converge an Apple Silicon Mac from a configuration repository.
-
-```sh
-brew install --cask azohra/tools/config
-```
-
-Homebrew supplies the release executable. Run `config bootstrap` explicitly to
-set up a machine; Config then maintains its own command at `~/.local/bin/config`.
-Installing or upgrading this cask does not run machine setup.
-
-[Config documentation](https://github.com/azohra/config)
-
-## op-agent
-
-Resolve and cache 1Password secrets for command-line tasks.
-
-```sh
-brew install --cask azohra/tools/op-agent
-```
-
-Supports Apple Silicon macOS and AMD64/ARM64 Linux. Homebrew also installs the
-1Password CLI. Run `op-agent setup` explicitly to configure credentials and the
-mise plugin.
-
-[op-agent documentation](https://github.com/azohra/op-agent)
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) before changing a formula or cask.

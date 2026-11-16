@@ -35,12 +35,10 @@ jobs:
           import json, os, subprocess
           matrix = []
           base = os.environ['BASE_SHA']
-          for package in ('gopro-yank', 'config', 'op-agent'):
+          for package in ('gopro-yank',):
               paths = [f'Casks/{package}.rb', 'mise.toml', 'scripts', '.github/workflows/check.yml']
               if not base or subprocess.run(['git', 'diff', '--quiet', base, 'HEAD', '--', *paths]).returncode:
-                  matrix.append({'package': package, 'os': 'macos-latest'})
-                  if package == 'op-agent':
-                      matrix.append({'package': package, 'os': 'ubuntu-latest'})
+                  matrix.append({'package': package})
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
               output.write('casks=' + json.dumps(matrix) + '\n')
           PY
@@ -49,14 +47,14 @@ jobs:
         run: mise run check:install-formulas
 
   casks:
-    name: ${{ matrix.package }} (${{ matrix.os }})
+    name: ${{ matrix.package }}
     needs: formulas
     if: needs.formulas.outputs.casks != '[]'
     strategy:
       fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.formulas.outputs.casks) }}
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1

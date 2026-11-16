@@ -26,15 +26,13 @@ installation checks through their isolated tap after staging the intended files:
 ```sh
 mise run check:install-formulas
 mise run check:install-cask -- gopro-yank
-mise run check:install-cask -- config
-mise run check:install-cask -- op-agent
 ```
 
 CI runs the same verbs.
 
 ## Release updates
 
-A release of gopro-yank, config, op-agent or YAML.sh opens a pull request here
+A release of gopro-yank or YAML.sh opens a pull request here
 with the generated cask or formula, and this repository's checks gate it.
 
 PR checks cover formula installation and any affected cask installation. The
